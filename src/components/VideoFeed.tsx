@@ -53,27 +53,6 @@ const videos: Video[] = [
     title: '桜の記憶 - 予告編',
     director: '山田 優子',
     filmId: 'sakura-memory'
-  },
-  {
-    id: '6',
-    url: '/videos/sm6.mp4',
-    title: '東京の夜に - 予告編',
-    director: '佐藤 健一',
-    filmId: 'tokyo-night'
-  },
-  {
-    id: '7',
-    url: '/videos/sm7.mp4',
-    title: '桜の記憶 - インタビュー',
-    director: '山田 優子',
-    filmId: 'sakura-memory'
-  },
-  {
-    id: '8',
-    url: '/videos/sm8.mp4',
-    title: '東京の夜に - インタビュー',
-    director: '佐藤 健一',
-    filmId: 'tokyo-night'
   }
 ]
 
