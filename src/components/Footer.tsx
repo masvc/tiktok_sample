@@ -22,7 +22,7 @@ const Footer = () => {
           fontSize="xs"
           color="whiteAlpha.900"
         >
-          <Text>© 2024 ArtFlow</Text>
+          <Text>© 2024 TiktokSample</Text>
           <Link 
             href="https://example.com"
             _hover={{ color: 'white', textDecoration: 'none' }}

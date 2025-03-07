@@ -50,7 +50,7 @@ const Header = () => {
           cursor="pointer"
           onClick={() => navigate('/')}
         >
-          ArtFlow
+          TiktokSample
         </Text>
 
         <IconButton
