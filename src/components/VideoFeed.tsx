@@ -2,6 +2,7 @@ import { Box, Container, IconButton, Text } from '@chakra-ui/react'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import { Navigation, Pagination, Virtual } from 'swiper/modules'
 import { useNavigate } from 'react-router-dom'
+import { useState, useCallback } from 'react'
 import type { Swiper as SwiperType } from 'swiper'
 import 'swiper/css'
 import 'swiper/css/pagination'
@@ -78,30 +79,15 @@ const videos: Video[] = [
 
 const VideoFeed = () => {
   const navigate = useNavigate()
+  const [activeIndex, setActiveIndex] = useState(0)
 
-  const handleSlideChange = (swiper: SwiperType) => {
-    try {
-      // 現在のスライドの動画を再生
-      const currentSlide = swiper.slides[swiper.activeIndex]
-      if (!currentSlide) return
+  const handleSlideChange = useCallback((swiper: SwiperType) => {
+    setActiveIndex(swiper.activeIndex)
+  }, [])
 
-      const video = currentSlide.querySelector('video#player')
-      if (video instanceof HTMLVideoElement) {
-        video.play().catch(err => console.log('Video play failed:', err))
-      }
-
-      // 他のスライドの動画を一時停止
-      swiper.slides.forEach((slide, index) => {
-        if (index !== swiper.activeIndex) {
-          const otherVideo = slide.querySelector('video#player')
-          if (otherVideo instanceof HTMLVideoElement) {
-            otherVideo.pause()
-          }
-        }
-      })
-    } catch (error) {
-      console.error('Slide change error:', error)
-    }
+  // 現在のスライドの前後2つまでの動画のみをレンダリング
+  const shouldRenderVideo = (index: number) => {
+    return Math.abs(index - activeIndex) <= 2
   }
 
   return (
@@ -122,11 +108,18 @@ const VideoFeed = () => {
           style={{ height: '100%' }}
           observer={true}
           observeParents={true}
+          preloadImages={false}
+          lazy={true}
+          updateOnWindowResize={true}
         >
           {videos.map((video, index) => (
             <SwiperSlide key={video.id} virtualIndex={index}>
               <Box position="relative" h="100%" w="100%">
-                <VideoPlayer url={video.url} />
+                {shouldRenderVideo(index) ? (
+                  <VideoPlayer url={video.url} isActive={index === activeIndex} />
+                ) : (
+                  <Box w="100%" h="100%" bg="black" />
+                )}
                 <Box
                   position="absolute"
                   bottom={16}
