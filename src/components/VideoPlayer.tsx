@@ -9,7 +9,7 @@ interface VideoPlayerProps {
 
 const VideoPlayer = ({ url }: VideoPlayerProps) => {
   const videoRef = useRef<HTMLVideoElement>(null)
-  const playerRef = useRef<Plyr>()
+  const playerRef = useRef<Plyr | null>(null)
 
   useEffect(() => {
     if (videoRef.current) {
@@ -20,20 +20,26 @@ const VideoPlayer = ({ url }: VideoPlayerProps) => {
       videoRef.current.preload = 'auto'
 
       // Plyrの設定
-      playerRef.current = new Plyr(videoRef.current, {
-        controls: [],
-        clickToPlay: false,
-        keyboard: false,
-        autopause: false,
-        muted: true,
-        volume: 0,
-        loop: { active: true }
-      })
+      if (!playerRef.current) {
+        playerRef.current = new Plyr(videoRef.current, {
+          controls: [],
+          muted: true,
+          clickToPlay: false,
+          keyboard: {
+            focused: false,
+            global: false
+          },
+          ratio: '16:9',
+          autopause: false
+        })
+      }
 
       // インタラクション後に自動再生を試みる
       const attemptPlay = async () => {
         try {
-          await videoRef.current?.play()
+          if (videoRef.current) {
+            await videoRef.current.play()
+          }
         } catch (error) {
           console.log('Playback failed:', error)
         }
@@ -42,19 +48,23 @@ const VideoPlayer = ({ url }: VideoPlayerProps) => {
       // タッチイベントまたはクリックイベント後に再生を試みる
       const startPlayback = () => {
         attemptPlay()
-        document.removeEventListener('touchstart', startPlayback)
-        document.removeEventListener('click', startPlayback)
       }
 
-      document.addEventListener('touchstart', startPlayback)
-      document.addEventListener('click', startPlayback)
+      const handleInteraction = () => {
+        startPlayback()
+      }
+
+      videoRef.current.addEventListener('click', handleInteraction, { passive: true })
+      videoRef.current.addEventListener('touchstart', handleInteraction, { passive: true })
 
       // 初回の再生試行
       attemptPlay()
 
       return () => {
-        document.removeEventListener('touchstart', startPlayback)
-        document.removeEventListener('click', startPlayback)
+        if (videoRef.current) {
+          videoRef.current.removeEventListener('click', handleInteraction)
+          videoRef.current.removeEventListener('touchstart', handleInteraction)
+        }
         if (playerRef.current) {
           playerRef.current.destroy()
         }
@@ -62,25 +72,15 @@ const VideoPlayer = ({ url }: VideoPlayerProps) => {
     }
   }, [url])
 
-  const handleVideoClick = () => {
-    if (videoRef.current) {
-      if (videoRef.current.paused) {
-        videoRef.current.play()
-      } else {
-        videoRef.current.pause()
-      }
-    }
-  }
-
   return (
-    <Box w="100%" h="100%" bg="black" onClick={handleVideoClick}>
+    <Box w="100%" h="100%" bg="black">
       <video
         ref={videoRef}
+        id="player"
         style={{ 
           width: '100%', 
           height: '100%', 
-          objectFit: 'cover',
-          touchAction: 'none'
+          objectFit: 'cover'
         }}
         playsInline
         muted

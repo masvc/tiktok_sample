@@ -1,4 +1,4 @@
-import { Box, Container, IconButton, Text, HStack, Button } from '@chakra-ui/react'
+import { Box, Container, IconButton, Text } from '@chakra-ui/react'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import { Navigation, Pagination, Virtual } from 'swiper/modules'
 import { useNavigate } from 'react-router-dom'
@@ -20,28 +20,28 @@ interface Video {
 const videos: Video[] = [
   {
     id: '1',
-    url: '/movies/sm1.mp4',
+    url: '/videos/sample-5s.mp4',
     title: '桜の記憶',
     director: '山田 優子',
     filmId: 'sakura-memory'
   },
   {
     id: '2',
-    url: '/movies/sm2.mp4',
+    url: '/videos/sample-10s.mp4',
     title: '東京の夜に',
     director: '佐藤 健一',
     filmId: 'tokyo-night'
   },
   {
     id: '3',
-    url: '/movies/sm3.mp4',
+    url: '/videos/sample-15s.mp4',
     title: '桜の記憶 - メイキング映像',
     director: '山田 優子',
     filmId: 'sakura-memory'
   },
   {
     id: '4',
-    url: '/movies/sm4.mp4',
+    url: '/videos/sample-20s.mp4',
     title: '東京の夜に - メイキング映像',
     director: '佐藤 健一',
     filmId: 'tokyo-night'
@@ -52,22 +52,28 @@ const VideoFeed = () => {
   const navigate = useNavigate()
 
   const handleSlideChange = (swiper: SwiperType) => {
-    // 現在のスライドの動画を再生
-    const currentSlide = swiper.slides[swiper.activeIndex]
-    const video = currentSlide.querySelector('video')
-    if (video) {
-      video.play()
-    }
+    try {
+      // 現在のスライドの動画を再生
+      const currentSlide = swiper.slides[swiper.activeIndex]
+      if (!currentSlide) return
 
-    // 他のスライドの動画を一時停止
-    swiper.slides.forEach((slide, index) => {
-      if (index !== swiper.activeIndex) {
-        const video = slide.querySelector('video')
-        if (video) {
-          video.pause()
-        }
+      const video = currentSlide.querySelector('video#player')
+      if (video instanceof HTMLVideoElement) {
+        video.play().catch(err => console.log('Video play failed:', err))
       }
-    })
+
+      // 他のスライドの動画を一時停止
+      swiper.slides.forEach((slide, index) => {
+        if (index !== swiper.activeIndex) {
+          const otherVideo = slide.querySelector('video#player')
+          if (otherVideo instanceof HTMLVideoElement) {
+            otherVideo.pause()
+          }
+        }
+      })
+    } catch (error) {
+      console.error('Slide change error:', error)
+    }
   }
 
   return (
@@ -86,6 +92,8 @@ const VideoFeed = () => {
           watchSlidesProgress={true}
           onSlideChange={handleSlideChange}
           style={{ height: '100%' }}
+          observer={true}
+          observeParents={true}
         >
           {videos.map((video, index) => (
             <SwiperSlide key={video.id} virtualIndex={index}>
@@ -93,7 +101,7 @@ const VideoFeed = () => {
                 <VideoPlayer url={video.url} />
                 <Box
                   position="absolute"
-                  bottom={8}
+                  bottom={16}
                   left={4}
                   right={4}
                   display="flex"
@@ -101,15 +109,15 @@ const VideoFeed = () => {
                   gap={2}
                   zIndex={1}
                 >
-                  <Box>
-                    <Text color="white" fontSize="2xl" fontWeight="bold" textShadow="0 0 8px rgba(0,0,0,0.8)">
-                      {video.title}
-                    </Text>
-                    <Text color="whiteAlpha.900" fontSize="md" textShadow="0 0 8px rgba(0,0,0,0.8)">
-                      監督: {video.director}
-                    </Text>
-                  </Box>
-                  <Box display="flex" justifyContent="flex-end">
+                  <Box display="flex" justifyContent="space-between" alignItems="flex-end">
+                    <Box flex={1}>
+                      <Text color="white" fontSize="2xl" fontWeight="bold" textShadow="0 0 8px rgba(0,0,0,0.8)">
+                        {video.title}
+                      </Text>
+                      <Text color="whiteAlpha.900" fontSize="md" textShadow="0 0 8px rgba(0,0,0,0.8)">
+                        監督: {video.director}
+                      </Text>
+                    </Box>
                     <IconButton
                       aria-label="作品詳細を見る"
                       icon={<Text fontSize="2xl">🎬</Text>}
@@ -124,6 +132,7 @@ const VideoFeed = () => {
                       transition="all 0.2s"
                       bg="whiteAlpha.200"
                       backdropFilter="blur(8px)"
+                      ml={4}
                     />
                   </Box>
                 </Box>
