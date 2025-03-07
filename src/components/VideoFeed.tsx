@@ -20,29 +20,57 @@ interface Video {
 const videos: Video[] = [
   {
     id: '1',
-    url: '/videos/sample-5s.mp4',
+    url: '/videos/sm1.mp4',
     title: '桜の記憶',
     director: '山田 優子',
     filmId: 'sakura-memory'
   },
   {
     id: '2',
-    url: '/videos/sample-10s.mp4',
+    url: '/videos/sm2.mp4',
     title: '東京の夜に',
     director: '佐藤 健一',
     filmId: 'tokyo-night'
   },
   {
     id: '3',
-    url: '/videos/sample-15s.mp4',
+    url: '/videos/sm3.mp4',
     title: '桜の記憶 - メイキング映像',
     director: '山田 優子',
     filmId: 'sakura-memory'
   },
   {
     id: '4',
-    url: '/videos/sample-20s.mp4',
+    url: '/videos/sm4.mp4',
     title: '東京の夜に - メイキング映像',
+    director: '佐藤 健一',
+    filmId: 'tokyo-night'
+  },
+  {
+    id: '5',
+    url: '/videos/sm5.mp4',
+    title: '桜の記憶 - 予告編',
+    director: '山田 優子',
+    filmId: 'sakura-memory'
+  },
+  {
+    id: '6',
+    url: '/videos/sm6.mp4',
+    title: '東京の夜に - 予告編',
+    director: '佐藤 健一',
+    filmId: 'tokyo-night'
+  },
+  {
+    id: '7',
+    url: '/videos/sm7.mp4',
+    title: '桜の記憶 - インタビュー',
+    director: '山田 優子',
+    filmId: 'sakura-memory'
+  },
+  {
+    id: '8',
+    url: '/videos/sm8.mp4',
+    title: '東京の夜に - インタビュー',
     director: '佐藤 健一',
     filmId: 'tokyo-night'
   }
