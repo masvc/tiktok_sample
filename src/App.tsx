@@ -1,20 +1,27 @@
-import { ChakraProvider, extendTheme } from '@chakra-ui/react'
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
+import { useEffect } from 'react'
+import { Routes, Route, useNavigate, useLocation } from 'react-router-dom'
 import VideoFeed from './components/VideoFeed'
 import ProductPage from './components/ProductPage'
-
-const theme = extendTheme({})
+import './App.css'
 
 function App() {
+  const navigate = useNavigate()
+  const location = useLocation()
+
+  useEffect(() => {
+    // GitHub Pages用のリダイレクト処理
+    const params = new URLSearchParams(location.search)
+    const path = params.get('path')
+    if (path) {
+      navigate(path, { replace: true })
+    }
+  }, [navigate, location])
+
   return (
-    <ChakraProvider theme={theme}>
-      <Router>
-        <Routes>
-          <Route path="/" element={<VideoFeed />} />
-          <Route path="/product/:id" element={<ProductPage />} />
-        </Routes>
-      </Router>
-    </ChakraProvider>
+    <Routes>
+      <Route path="/" element={<VideoFeed />} />
+      <Route path="/product/:id" element={<ProductPage />} />
+    </Routes>
   )
 }
 
