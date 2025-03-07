@@ -28,7 +28,7 @@ const videos: Video[] = [
   },
   {
     id: '2',
-    url: '/videos/sm2.mp4',
+    url: '/videos/tokyo-night-preview.mp4',
     title: '東京の夜に',
     director: '佐藤 健一',
     filmId: 'tokyo-night'
