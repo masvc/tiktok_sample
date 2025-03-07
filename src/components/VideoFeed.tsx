@@ -108,9 +108,6 @@ const VideoFeed = () => {
           style={{ height: '100%' }}
           observer={true}
           observeParents={true}
-          preloadImages={false}
-          lazy={true}
-          updateOnWindowResize={true}
         >
           {videos.map((video, index) => (
             <SwiperSlide key={video.id} virtualIndex={index}>
