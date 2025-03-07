@@ -85,9 +85,9 @@ const VideoFeed = () => {
     setActiveIndex(swiper.activeIndex)
   }, [])
 
-  // 現在のスライドの前後2つまでの動画のみをレンダリング
+  // 現在のスライドの前後1つまでの動画のみをレンダリング
   const shouldRenderVideo = (index: number) => {
-    return Math.abs(index - activeIndex) <= 2
+    return Math.abs(index - activeIndex) <= 1
   }
 
   return (
@@ -108,6 +108,9 @@ const VideoFeed = () => {
           style={{ height: '100%' }}
           observer={true}
           observeParents={true}
+          simulateTouch={true}
+          touchRatio={1}
+          resistance={false}
         >
           {videos.map((video, index) => (
             <SwiperSlide key={video.id} virtualIndex={index}>

@@ -1,6 +1,5 @@
 import { Box } from '@chakra-ui/react'
-import { useEffect, useRef, useState } from 'react'
-import Plyr from 'plyr'
+import { useEffect, useRef } from 'react'
 import 'plyr/dist/plyr.css'
 
 interface VideoPlayerProps {
@@ -10,81 +9,38 @@ interface VideoPlayerProps {
 
 const VideoPlayer = ({ url, isActive }: VideoPlayerProps) => {
   const videoRef = useRef<HTMLVideoElement>(null)
-  const playerRef = useRef<Plyr | null>(null)
-  const [hasInteracted, setHasInteracted] = useState(false)
 
   useEffect(() => {
-    if (videoRef.current) {
-      // 動画要素の設定
-      videoRef.current.muted = true
-      videoRef.current.playsInline = true
-      videoRef.current.loop = true
+    const videoElement = videoRef.current
+    if (!videoElement) return
 
-      // Plyrの設定
-      if (!playerRef.current) {
-        playerRef.current = new Plyr(videoRef.current, {
-          controls: [],
-          muted: true,
-          clickToPlay: false,
-          keyboard: {
-            focused: false,
-            global: false
-          },
-          ratio: '16:9',
-          autopause: false
-        })
-      }
+    // 動画要素の設定
+    videoElement.muted = true
+    videoElement.playsInline = true
+    videoElement.loop = true
 
-      // インタラクション後に自動再生を試みる
-      const attemptPlay = async () => {
-        try {
-          if (videoRef.current && isActive) {
-            await videoRef.current.play()
-          }
-        } catch (error) {
-          console.log('Playback failed:', error)
+    // アクティブな場合は再生を試みる
+    const playVideo = async () => {
+      try {
+        if (isActive) {
+          await videoElement.play()
+        } else {
+          videoElement.pause()
         }
-      }
-
-      // タッチイベントまたはクリックイベント後に再生を試みる
-      const handleInteraction = () => {
-        if (!hasInteracted) {
-          setHasInteracted(true)
-        }
-        attemptPlay()
-      }
-
-      videoRef.current.addEventListener('click', handleInteraction, { passive: true })
-      videoRef.current.addEventListener('touchstart', handleInteraction, { passive: true })
-
-      // メタデータ読み込み完了時の処理
-      const handleLoadedMetadata = () => {
-        if (hasInteracted || isActive) {
-          attemptPlay()
-        }
-      }
-      videoRef.current.addEventListener('loadedmetadata', handleLoadedMetadata, { passive: true })
-
-      // アクティブな場合は再生を試みる
-      if (isActive && hasInteracted) {
-        attemptPlay()
-      } else if (!isActive && videoRef.current) {
-        videoRef.current.pause()
-      }
-
-      return () => {
-        if (videoRef.current) {
-          videoRef.current.removeEventListener('click', handleInteraction)
-          videoRef.current.removeEventListener('touchstart', handleInteraction)
-          videoRef.current.removeEventListener('loadedmetadata', handleLoadedMetadata)
-          videoRef.current.pause()
-        }
-        if (playerRef.current) {
-          playerRef.current.destroy()
-        }
+      } catch (error) {
+        console.log('Video playback error:', error)
       }
     }
-  }, [url, isActive, hasInteracted])
+
+    playVideo()
+
+    // クリーンアップ
+    return () => {
+      if (videoElement) {
+        videoElement.pause()
+      }
+    }
+  }, [isActive, url])
 
   return (
     <Box w="100%" h="100%" bg="black">
@@ -99,7 +55,7 @@ const VideoPlayer = ({ url, isActive }: VideoPlayerProps) => {
         playsInline
         muted
         loop
-        preload={isActive ? 'auto' : 'metadata'}
+        preload="auto"
       >
         <source src={url} type="video/mp4" />
       </video>
