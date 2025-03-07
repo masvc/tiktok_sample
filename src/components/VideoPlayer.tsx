@@ -38,6 +38,10 @@ const VideoPlayer = ({ url }: VideoPlayerProps) => {
       const attemptPlay = async () => {
         try {
           if (videoRef.current) {
+            // 再生前に一時停止を確実に解除
+            videoRef.current.pause()
+            // 少し待ってから再生を試みる
+            await new Promise(resolve => setTimeout(resolve, 100))
             await videoRef.current.play()
           }
         } catch (error) {
@@ -46,16 +50,13 @@ const VideoPlayer = ({ url }: VideoPlayerProps) => {
       }
 
       // タッチイベントまたはクリックイベント後に再生を試みる
-      const startPlayback = () => {
-        attemptPlay()
-      }
-
       const handleInteraction = () => {
-        startPlayback()
+        attemptPlay()
       }
 
       videoRef.current.addEventListener('click', handleInteraction, { passive: true })
       videoRef.current.addEventListener('touchstart', handleInteraction, { passive: true })
+      videoRef.current.addEventListener('loadedmetadata', handleInteraction, { passive: true })
 
       // 初回の再生試行
       attemptPlay()
@@ -64,6 +65,8 @@ const VideoPlayer = ({ url }: VideoPlayerProps) => {
         if (videoRef.current) {
           videoRef.current.removeEventListener('click', handleInteraction)
           videoRef.current.removeEventListener('touchstart', handleInteraction)
+          videoRef.current.removeEventListener('loadedmetadata', handleInteraction)
+          videoRef.current.pause()
         }
         if (playerRef.current) {
           playerRef.current.destroy()
