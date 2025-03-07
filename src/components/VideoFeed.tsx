@@ -46,13 +46,6 @@ const videos: Video[] = [
     title: '東京の夜に - メイキング映像',
     director: '佐藤 健一',
     filmId: 'tokyo-night'
-  },
-  {
-    id: '5',
-    url: '/videos/sm5.mp4',
-    title: '桜の記憶 - 予告編',
-    director: '山田 優子',
-    filmId: 'sakura-memory'
   }
 ]
 

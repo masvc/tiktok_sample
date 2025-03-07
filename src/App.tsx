@@ -2,7 +2,6 @@ import { Routes, Route } from 'react-router-dom'
 import { ChakraProvider } from '@chakra-ui/react'
 import VideoFeed from './components/VideoFeed'
 import ProductPage from './components/ProductPage'
-import './App.css'
 
 function App() {
   return (
